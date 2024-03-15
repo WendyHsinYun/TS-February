@@ -1,0 +1,42 @@
+{
+  "name": "nuxt-app",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "build": "nuxt build --dotenv .env.prod",
+    "dev": "nuxt dev --dotenv .env.dev",
+    "generate": "nuxt generate",
+    "preview": "nuxt preview",
+    "postinstall": "nuxt prepare",
+    "lint": "eslint --fix --ext .ts,.js,.vue ."
+  },
+  "devDependencies": {
+    "@nuxt/devtools": "latest",
+    "@nuxtjs/eslint-config-typescript": "^12.1.0",
+    "@pinia-plugin-persistedstate/nuxt": "^1.2.0",
+    "@vue/language-plugin-pug": "^1.8.27",
+    "eslint": "^8.56.0",
+    "eslint-config-prettier": "^9.1.0",
+    "eslint-plugin-prettier": "^5.1.2",
+    "nuxt": "^3.9.0",
+    "prettier": "3.1.1",
+    "prettier-eslint": "^16.2.0",
+    "sass": "^1.69.5",
+    "sass-loader": "^13.3.3",
+    "vite-plugin-vuetify": "^2.0.1",
+    "vue": "^3.3.13",
+    "vue-router": "^4.2.5",
+    "vuetify": "^3.4.8"
+  },
+  "dependencies": {
+    "@mdi/font": "^7.4.47",
+    "@pinia/nuxt": "^0.5.1",
+    "dayjs": "^1.11.10",
+    "defu": "^6.1.4",
+    "lodash": "^4.17.21",
+    "pinia": "^2.1.7",
+    "pug": "^3.0.2",
+    "pug-plain-loader": "^1.1.0",
+    "xlsx": "https://cdn.sheetjs.com/xlsx-0.20.1/xlsx-0.20.1.tgz"
+  }
+}
