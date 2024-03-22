@@ -21,46 +21,49 @@ v-row(no-gutters).align-center.justify-space-between
           )
 </template>
 
-<script setup>
+<script setup lang="ts">
 import _ from 'lodash';
+import type { ILevel, ICustomer } from '~/types/type';
 
-const props = defineProps({
-  rawData: {
-    type: Object,
-    default: () => {},
-  },
-  selected: {
-    type: Array,
-    default: () => [],
-  },
-  level: {
-    type: String,
-    default: null,
-  },
+interface Props {
+  rawData: Record<string, ICustomer>;
+  selected?: string[];
+  level?: string;
+}
+
+const props = withDefaults(defineProps<Props>(), {
+  rawData: () => ({}),
+  selected: () => [],
+  level: '',
 });
 
-const emit = defineEmits(['onSearched', 'onLevelSelected']);
+const emit = defineEmits<{
+  onSearched: [value: string];
+  onLevelSelected: [value: string];
+}>();
 
-const tableData = ref(props.rawData);
-const levels = [
+const tableData: Ref<Record<string, ICustomer>> = ref(props.rawData);
+
+const levels: Ref<ILevel[]> = ref([
   { title: 'Premium', value: 'Premium' },
   { title: 'Gold', value: 'Gold' },
   { title: 'General', value: 'General' },
-];
+]);
 
-const search = ref('');
+const search = ref<string>('');
 
-const clearable = ref(true);
+const clearable = ref<boolean>(true);
 
-const disabled = computed(() => {
+const disabled = computed<boolean>(() => {
   return props.selected.length === 0;
 });
 
-watch(search, (newValue) => {
+watch(search, (newValue: string) => {
   emit('onSearched', newValue);
 });
 
-const onLevelSelected = (value) => {
+const onLevelSelected = (value: string) => {
   emit('onLevelSelected', value);
 };
 </script>
+~/types/type

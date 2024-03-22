@@ -15,58 +15,36 @@ v-text-field(
     span.text-line {{ placeholder }}
   template(v-if='prependIcon' v-slot:prepend-inner)
     slot
-
 </template>
 
-<script setup>
-const props = defineProps({
-  modelValue: {
-    type: String,
-    default: '',
-  },
-  rules: {
-    type: Array,
-    default: () => [],
-  },
-  placeholder: {
-    type: String,
-    default: '',
-  },
-  validateOn: {
-    type: String,
-    default: 'submit',
-  },
-  maxLength: {
-    type: Number,
-    default: 0,
-  },
-  clearable: {
-    type: Boolean,
-    default: false,
-  },
-  hideDetails: {
-    type: Boolean,
-    default: false,
-  },
-  prependIcon: {
-    type: Boolean,
-    default: false,
-  },
+<script setup lang="ts">
+interface Props {
+  modelValue?: string;
+  rules?: any[];
+  placeholder?: string;
+  validateOn?: string;
+  clearable?: boolean;
+  hideDetails?: boolean;
+  prependIcon?: boolean;
+}
+
+const props = withDefaults(defineProps<Props>(), {
+  modelValue: '',
+  rules: () => [],
+  placeholder: '',
+  validateOn: 'submit',
+  clearable: false,
+  hideDetails: false,
+  prependIcon: false,
 });
 
-const emit = defineEmits(['update:modelValue']);
+const emit = defineEmits<{
+  'update:modelValue': [value: string];
+}>();
 
-const onUpdate = (value) => {
+const onUpdate = (value: string) => {
   emit('update:modelValue', value);
 };
-
-const count = computed(() => {
-  return props.modelValue.length;
-});
-
-const isError = computed(() => {
-  return count.value <= props.maxLength;
-});
 </script>
 
 <style lang="sass" scoped>
@@ -84,7 +62,6 @@ const isError = computed(() => {
   padding-inline: 0 !important
   align-items: flex-start
   font-size: 11px
-
 
 :deep(.v-field__clearable) > .v-icon
   font-size: 18px

@@ -2,14 +2,14 @@
 v-table
   thead.pe-2
     tr
-      th(width='2.5%') 
+      th(width='2.5%')
         v-checkbox-btn(
-          :model-value="selectAll" 
+          :model-value="selectAll"
           @update:modelValue="onSelectedAll")
       th(width='4.5%').text-center #
-      th(width='10%' @click='sortTable("name")' style='cursor: pointer') 
+      th(width='10%' @click='sortTable("name")' style='cursor: pointer')
         p.d-flex.align-center
-          span name 
+          span name
           div(v-if='sortedColumn.column !== "name"')
             v-icon(size='14') mdi-unfold-more-horizontal
           div(v-else-if='sortedColumn.order')
@@ -21,7 +21,7 @@ v-table
       th(width='10%') phone
       th(width='10%') address
 
-      th(width='10%' @click='sortTable("register")' style='cursor: pointer')          
+      th(width='10%' @click='sortTable("register")' style='cursor: pointer')
         p.d-flex.align-center
           span register time
           div(v-if='sortedColumn.column !== "register" ')
@@ -30,7 +30,7 @@ v-table
             v-icon(size='14') mdi-arrow-up-thin
           div(v-else)
             v-icon(size='14') mdi-arrow-down-thin
-      th(width='10%' @click='sortTable("login")'  style='cursor: pointer')          
+      th(width='10%' @click='sortTable("login")'  style='cursor: pointer')
         p.d-flex.align-center
           span last login
           div(v-if='sortedColumn.column !== "login" ')
@@ -39,7 +39,7 @@ v-table
             v-icon(size='14') mdi-arrow-up-thin
           div(v-else)
             v-icon(size='14') mdi-arrow-down-thin
-      th(width='10%' @click='sortTable("level")' style='cursor: pointer')          
+      th(width='10%' @click='sortTable("level")' style='cursor: pointer')
         p.d-flex.align-center
           span customer level
           div(v-if='sortedColumn.column !== "level"')
@@ -78,36 +78,43 @@ v-table
       td(width='5%').text-center
 </template>
 
-<script setup>
+<script setup lang="ts">
 import _ from 'lodash';
-import { watch } from 'vue';
 
-const props = defineProps({
-  rawData: {
-    type: Object,
-    default: () => {},
-  },
-  modelValue: {
-    type: Array,
-    default: () => [],
-  },
-  selectAll: {
-    type: Boolean,
-    default: false,
-  },
-  level: {
-    type: String,
-    default: null,
-  },
-  sortedColumn: {
-    type: Object,
-    default: { column: null, order: 0 },
-  },
+import type { IExpandRows } from '~/types/type';
+
+interface Props {
+  rawData: any;
+  modelValue: string[];
+  selectAll?: boolean;
+  level?: string;
+  sortedColumn?: any;
+}
+
+const props = withDefaults(defineProps<Props>(), {
+  rawData: () => {},
+  modelValue: () => [],
+  selectAll: false,
+  level: '',
+  sortedColumn: () => ({ column: null, order: 0 }),
 });
 
-const emit = defineEmits(['update:modelValue', 'onSelectAll', 'onSortColumn']);
+const emit = defineEmits<{
+  'update:modelValue': [value: string[]];
+  onSelectAll: [value: boolean];
+  onSortColumn: [value: string];
+}>();
 
-const tableData = ref(props.rawData);
+const tableData = ref<any>(props.rawData);
+const expandRows: Ref<IExpandRows> = ref({});
+
+const expandAddress = (key: string): void => {
+  if (key in expandRows.value) {
+    expandRows.value[key] = !expandRows.value[key];
+  } else {
+    expandRows.value[key] = true;
+  }
+};
 
 watch(
   () => props.rawData,
@@ -117,25 +124,15 @@ watch(
   { deep: true },
 );
 
-const onSelected = (value) => {
+const onSelected = (value: string[]) => {
   emit('update:modelValue', value);
 };
 
-const onSelectedAll = (value) => {
+const onSelectedAll = (value: boolean) => {
   emit('onSelectAll', value);
 };
 
-const expandRows = ref({});
-
-const expandAddress = (key) => {
-  if (key in expandRows.value) {
-    expandRows.value[key] = !expandRows.value[key];
-  } else {
-    expandRows.value[key] = true;
-  }
-};
-
-const sortTable = (col) => {
+const sortTable = (col: string) => {
   emit('onSortColumn', col);
 };
 </script>

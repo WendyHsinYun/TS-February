@@ -3,7 +3,7 @@ v-btn.btn(
   @click="click"
   :color='color'
   rounded='lg'
-  variant='flat'  
+  variant='flat'
   :prepend-icon="prependIcon"
   :active='active'
   :height='height'
@@ -12,36 +12,25 @@ v-btn.btn(
     span.text-primaryText.text-capitalize {{ text }}
 </template>
 
-<script setup>
-const props = defineProps({
-  click: {
-    type: Function,
-    default: () => {},
-  },
-  active: {
-    type: Boolean,
-    default: false,
-  },
-  color: {
-    type: String,
-    default: '',
-  },
-  text: {
-    type: String,
-    default: '',
-  },
-  prependIcon: {
-    type: String,
-    default: '',
-  },
-  height: {
-    type: String,
-    default: '40',
-  },
-  block: {
-    type: Boolean,
-    default: false,
-  },
+<script setup lang="ts">
+interface Props {
+  click?: () => void;
+  active?: boolean;
+  color?: string;
+  text?: string;
+  prependIcon?: string;
+  height?: string;
+  block?: boolean;
+}
+
+const props = withDefaults(defineProps<Props>(), {
+  click: () => {},
+  active: false,
+  color: '',
+  text: '',
+  prependIcon: '',
+  height: '40',
+  block: false,
 });
 </script>
 

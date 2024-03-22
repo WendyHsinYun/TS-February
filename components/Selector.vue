@@ -24,40 +24,32 @@ v-select(
 
 </template>
 
-<script setup>
-const props = defineProps({
-  modelValue: {
-    type: String,
-    default: '',
-  },
-  items: {
-    type: Array,
-    default: () => [],
-  },
-  disabled: {
-    type: Boolean,
-    default: false,
-  },
-  rules: {
-    type: Array,
-    default: () => [],
-  },
-  placeholder: {
-    type: String,
-    default: '',
-  },
-  clearable: {
-    type: Boolean,
-    default: true,
-  },
+<script setup lang="ts">
+interface Props {
+  modelValue?: string;
+  items: any[];
+  disabled: boolean;
+  rules?: any[];
+  placeholder?: string;
+  clearable?: boolean;
+}
+
+const props = withDefaults(defineProps<Props>(), {
+  modelValue: '',
+  items: () => [],
+  disabled: false,
+  rules: () => [],
+  placeholder: '',
+  clearable: true,
 });
 
-const emit = defineEmits(['update:modelValue']);
+const emit = defineEmits<{
+  'update:modelValue': [value: string];
+}>();
 
-const onUpdated = (value) => {
+const onUpdated = (value: string) => {
   emit('update:modelValue', value);
 };
-
 </script>
 
 <style lang="sass" scoped>

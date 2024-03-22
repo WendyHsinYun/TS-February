@@ -2,7 +2,7 @@
 v-row(no-gutters).justify-center
   v-col.d-flex.align-center(cols="auto")
     span(v-if="customerTotal > 0").text-body-2.text-secondaryText.font-weight-bold ({{ pageStartIndex + 1 }}-{{ pageEndIndex }} / {{ customerTotal }})
-    span(v-else).text-body-2.text-secondaryText.font-weight-bold (0 / {{ customerTotal }}) 
+    span(v-else).text-body-2.text-secondaryText.font-weight-bold (0 / {{ customerTotal }})
 
   v-col.d-flex.align-center.ms-4.me-6(cols="auto")
     v-pagination(
@@ -18,41 +18,40 @@ v-row(no-gutters).justify-center
 
 </template>
 
-<script setup>
-const props = defineProps({
-  modelValue: {
-    type: Number,
-    default: 1,
-  },
-  pageSize: {
-    type: Number,
-    default: 5,
-  },
-  customerTotal: {
-    type: Number,
-    default: 0,
-  },
+<script setup lang="ts">
+interface Props {
+  modelValue: number;
+  pageSize?: number;
+  customerTotal?: number;
+}
+
+const props = withDefaults(defineProps<Props>(), {
+  modelValue: 1,
+  pageSize: 5,
+  customerTotal: 0,
 });
 
-const emit = defineEmits(['update:modelValue']);
+const emit = defineEmits<{
+  'update:modelValue': [value: number];
+}>();
 
-const pageTotalVisible = ref(7);
+const pageTotalVisible = ref<number>(7);
 
-const pageStartIndex = computed(() => {
+const pageStartIndex = computed<number>(() => {
   return (props.modelValue - 1) * props.pageSize;
 });
 
-const pageEndIndex = computed(() => {
+const pageEndIndex = computed<number>(() => {
   return props.modelValue * props.pageSize > props.customerTotal
     ? props.customerTotal
     : props.modelValue * props.pageSize;
 });
 
-const pageLength = computed(() => {
+const pageLength = computed<number>(() => {
   return Math.ceil(props.customerTotal / props.pageSize);
 });
 
-const onUpdated = (value) => {
+const onUpdated = (value: number) => {
   emit('update:modelValue', value);
 };
 </script>
