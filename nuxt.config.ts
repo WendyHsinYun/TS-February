@@ -3,14 +3,15 @@ import vuetify, { transformAssetUrls } from 'vite-plugin-vuetify';
 
 export default defineNuxtConfig({
   ssr: false,
-  devtools: {
-    enabled: false,
-  },
+  devtools: true,
   runtimeConfig: {
     apiSecret: process.env.NUXT_API_SECRET,
     public: {
       apiBase: process.env.NUXT_PUBLIC_API_BASE,
     },
+  },
+  typescript: {
+    typeCheck: true,
   },
   build: {
     transpile: ['vuetify'],
@@ -22,11 +23,10 @@ export default defineNuxtConfig({
         config.plugins.push(vuetify({ autoImport: true }));
       });
     },
-    '@pinia/nuxt',
-    '@pinia-plugin-persistedstate/nuxt',
   ],
   plugins: [],
   css: ['~/assets/sass/global.sass'],
+
   vite: {
     vue: {
       template: {

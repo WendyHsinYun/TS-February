@@ -12,7 +12,7 @@ const customTheme = {
     surface: '#FFFFFF',
     primaryText: '#282828',
     secondaryText: '#5E5E5E',
-    line: '#D0D0D0'
+    line: '#D0D0D0',
   },
 };
 

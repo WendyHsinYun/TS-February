@@ -14,16 +14,16 @@ v-row.ml-6
     v-card(color="background" variant="outlined" style='border: 1px solid #D0D0D0')
 
       TableFilter(
-        :level='level' 
+        :level='level'
         :selected='selected'
         :rawData='tableData'
         @onSearched='onSearched'
         @onLevelSelected='onLevelSelected')
 
       Table(
-        :rawData='tableData' 
-        v-model='selected' 
-        :selectAll='selectAll' 
+        :rawData='tableData'
+        v-model='selected'
+        :selectAll='selectAll'
         :sortedColumn='sortedColumn'
         @onSelectAll='onSelectAll'
         @onSortColumn='sortTable'
@@ -37,35 +37,44 @@ v-row.ml-6
     )
 
 PopupLevel(
-  v-if='levelPopup' 
-  v-model='levelPopup' 
+  v-if='levelPopup'
+  v-model='levelPopup'
   :selectedCustomers='selectedCustomers'
   :level='level'
   @submit='onLevelChanged'
-  @close='close()'
+  @close='close'
   )
 
 </template>
 
-<script setup>
+<script setup lang="ts">
 import _ from 'lodash';
 import dayjs from 'dayjs';
 import { utils, writeFileXLSX } from 'xlsx';
 
-const tableData = ref(customersData);
-const originalData = ref(customersData);
-const customerTotal = ref(Object.keys(tableData.value).length);
+import type { IColumn, ICustomer } from '~/types/type';
 
-const page = ref(1);
-const pageSize = ref(6);
+const tableData = ref<Record<string, ICustomer>>(customersData);
+const originalData = ref<Record<string, ICustomer>>(customersData);
+const customerTotal = ref<number>(Object.keys(tableData.value).length);
 
-const level = ref(null);
-const levelPopup = ref(false);
+const page = ref<number>(1);
+const pageSize = ref<number>(6);
 
-const selected = ref([]);
-const selectAll = ref(false);
+const level = ref<string>('');
+const levelPopup = ref<boolean>(false);
 
-const selectedCustomers = computed(() => {
+const selected = ref<any[]>([]);
+const selectAll = ref<boolean>(false);
+
+const search = ref<string>('');
+const searchResult = ref({});
+
+const sortedColumn: Ref<IColumn> = ref({ column: '', order: 0 });
+
+type Entry = [string, ICustomer];
+
+const selectedCustomers = computed<string[]>(() => {
   const array = [];
 
   for (const [key, value] of Object.entries(originalData.value)) {
@@ -77,10 +86,7 @@ const selectedCustomers = computed(() => {
   return array;
 });
 
-const search = ref('');
-const searchResult = ref({});
-
-const searchContact = (value) => {
+const searchContact = (value: string) => {
   searchResult.value = {};
 
   const regex = new RegExp(value, 'i');
@@ -89,7 +95,7 @@ const searchContact = (value) => {
     for (const [key, value] of Object.entries(entriesValue)) {
       const searchValue = [];
 
-      if (key !== 'register' || 'login') {
+      if (key !== 'register' && key !== 'login') {
         searchValue.push(value);
       }
 
@@ -104,18 +110,9 @@ const searchContact = (value) => {
   tableData.value = searchResult.value;
 };
 
-const debounce = _.debounce((value) => {
+const debounce = _.debounce((value: string) => {
   searchContact(value);
 }, 500);
-
-watch(search, (newValue) => {
-  if (newValue) {
-    debounce(newValue);
-  } else {
-    debounce.cancel();
-    getTableSlice();
-  }
-});
 
 const getTableSlice = (page = 1) => {
   const startIndex = (page - 1) * pageSize.value;
@@ -135,18 +132,7 @@ const getTableSlice = (page = 1) => {
   tableData.value = slicedTablaData;
 };
 
-onMounted(() => {
-  getTableSlice();
-});
-
-watch(page, (newValue) => {
-  getTableSlice(newValue);
-  selectAll.value = isSelectAll();
-});
-
-const sortedColumn = ref({ column: null, order: 0 });
-
-const sortNumber = ([, a], [, b]) => {
+const sortNumber = ([, a]: Entry, [, b]: Entry) => {
   const order = sortedColumn.value.order;
   const col = sortedColumn.value.column;
 
@@ -157,7 +143,7 @@ const sortNumber = ([, a], [, b]) => {
   }
 };
 
-const sortString = ([, a], [, b]) => {
+const sortString = ([, a]: Entry, [, b]: Entry) => {
   const order = sortedColumn.value.order;
   const col = sortedColumn.value.column;
 
@@ -168,16 +154,17 @@ const sortString = ([, a], [, b]) => {
   }
 };
 
-const sortTable = (col) => {
+const sortTable = (col: string) => {
   if (sortedColumn.value.column === col) {
     sortedColumn.value.order = 1 - sortedColumn.value.order;
   } else {
     sortedColumn.value = { column: col, order: 0 };
   }
 
+  // entries 是 Array<[string, ICustomer]> 類型
   const entries = Object.entries(originalData.value);
 
-  if (col === 'name' || 'level') {
+  if (col === 'name' || col === 'level') {
     entries.sort(sortString);
   } else {
     entries.sort(sortNumber);
@@ -187,16 +174,16 @@ const sortTable = (col) => {
   getTableSlice(page.value);
 };
 
-const onSearched = (value) => {
+const onSearched = (value: string) => {
   search.value = value;
 };
 
-const onLevelSelected = (value) => {
+const onLevelSelected = (value: string) => {
   level.value = value;
   levelPopup.value = true;
 };
 
-const onSelectAll = (newValue) => {
+const onSelectAll = (newValue: boolean) => {
   selectAll.value = !selectAll.value;
 
   const tableKeys = Object.keys(tableData.value);
@@ -213,10 +200,6 @@ const isSelectAll = () => {
   );
 };
 
-watch(selected, () => {
-  selectAll.value = isSelectAll();
-});
-
 const onLevelChanged = () => {
   const copies = { ...originalData.value };
 
@@ -228,13 +211,13 @@ const onLevelChanged = () => {
   getTableSlice(page.value);
 
   levelPopup.value = false;
-  level.value = null;
+  level.value = '';
   selected.value = [];
 };
 
-const close = () => {
+const close = (event: Event) => {
   levelPopup.value = false;
-  level.value = null;
+  level.value = '';
 };
 
 const exportFile = () => {
@@ -249,6 +232,28 @@ const exportFile = () => {
   utils.book_append_sheet(wb, ws, 'sheet1');
   writeFileXLSX(wb, `${now}_sheet.xlsx`);
 };
+
+watch(search, (newValue) => {
+  if (newValue) {
+    debounce(newValue);
+  } else {
+    debounce.cancel();
+    getTableSlice();
+  }
+});
+
+watch(selected, () => {
+  selectAll.value = isSelectAll();
+});
+
+watch(page, (newValue) => {
+  getTableSlice(newValue);
+  selectAll.value = isSelectAll();
+});
+
+onMounted(() => {
+  getTableSlice();
+});
 </script>
 
 <style lang="sass">

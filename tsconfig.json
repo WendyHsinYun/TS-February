@@ -1,0 +1,24 @@
+{
+  "compilerOptions": {
+    "target": "es5",  // 指定編譯生成的JS版本
+    "module": "commonjs", // 指定生成哪種模組
+    "strict": true,  // 啟用所有嚴格類型檢查選項
+    "noImplicitAny": true,
+    "esModuleInterop": true,  // 兼容模組導入的方式
+    "skipLibCheck": true,     // 不會檢查引入的函式庫檔案       
+    "forceConsistentCasingInFileNames": true, // 確保檔案的大小寫一致
+  },
+  "extends": "./.nuxt/tsconfig.json",
+  "include": [
+    "src/**/*.ts",
+    "src/**/*.d.ts",
+    "src/**/*.tsx",
+    "src/**/*.vue",
+    "env.d.ts",
+    ".nuxt/nuxt.d.ts",
+    "**/*"
+  ],
+  "exclude": [ // 指定排除的文件
+  "node_modules"
+  ]
+}

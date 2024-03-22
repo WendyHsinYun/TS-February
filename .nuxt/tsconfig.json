@@ -6,7 +6,7 @@
     "jsxImportSource": "vue",
     "target": "ESNext",
     "module": "ESNext",
-    "moduleResolution": "Node",
+    "moduleResolution": "Bundler",
     "skipLibCheck": true,
     "isolatedModules": true,
     "useDefineForClassFields": true,
@@ -54,16 +54,13 @@
         "../public"
       ],
       "#app": [
-        "../../../node_modules/nuxt/dist/app"
+        "../node_modules/nuxt/dist/app"
       ],
       "#app/*": [
-        "../../../node_modules/nuxt/dist/app/*"
+        "../node_modules/nuxt/dist/app/*"
       ],
       "vue-demi": [
-        "../../../node_modules/nuxt/dist/app/compat/vue-demi"
-      ],
-      "pinia": [
-        "../node_modules/pinia/dist/pinia"
+        "../node_modules/nuxt/dist/app/compat/vue-demi"
       ],
       "#vue-router": [
         "./vue-router-stub"
@@ -84,19 +81,16 @@
   },
   "include": [
     "./nuxt.d.ts",
+    "../.config/nuxt.*",
     "../**/*",
-    "../node_modules/@pinia/nuxt/runtime",
-    "../node_modules/@pinia-plugin-persistedstate/nuxt/runtime",
+    "../node_modules/@nuxt/devtools/runtime",
     "../node_modules/@nuxt/telemetry/runtime",
-    "..",
-    "../../../node_modules/nuxt/dist/app",
-    "../../../node_modules/nuxt/dist/app/compat/vue-demi"
+    ".."
   ],
   "exclude": [
     "../node_modules",
-    "../../../node_modules/nuxt/node_modules",
-    "../node_modules/@pinia/nuxt/runtime/server",
-    "../node_modules/@pinia-plugin-persistedstate/nuxt/runtime/server",
+    "../node_modules/nuxt/node_modules",
+    "../node_modules/@nuxt/devtools/runtime/server",
     "../node_modules/@nuxt/telemetry/runtime/server",
     "../dist",
     "../.output"

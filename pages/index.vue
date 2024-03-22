@@ -1,6 +1,6 @@
 <template lang="pug">
 </template>
 
-<script setup>
+<script setup lang="ts">
 navigateTo('/dashboard');
 </script>
